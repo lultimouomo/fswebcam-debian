@@ -1,0 +1,25 @@
+## Use headers from linux-libc-dev instead of the old included ones.
+
+--- a/src_v4l1.c	2006-12-10 20:09:15.000000000 +0100
++++ b/src_v4l1.c	2009-02-03 01:46:16.000000000 +0100
+@@ -19,7 +19,7 @@
+ #include <errno.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
+-#include "videodev.h"
++#include <linux/videodev.h>
+ #include "videodev_mjpeg.h"
+ #include "src.h"
+ #include "log.h"
+
+--- a/src_v4l2.c	2006-12-10 22:03:55.000000000 +0100
++++ b/src_v4l2.c	2009-02-03 01:46:08.000000000 +0100
+@@ -19,7 +19,7 @@
+ #include <errno.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
+-#include "videodev2.h"
++#include <linux/videodev2.h>
+ #include "src.h"
+ #include "log.h"
+ 

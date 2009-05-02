@@ -1,0 +1,60 @@
+## Correct spelling mistake (s/valiable/vailable/)
+
+diff -u fswebcam-20070108/src_v4l1.c fswebcam-20070108new/src_v4l1.c
+--- fswebcam-20070108/src_v4l1.c	2009-05-03 11:31:02.000000000 +0200
++++ fswebcam-20070108new/src_v4l1.c	2009-05-03 11:31:56.000000000 +0200
+@@ -142,13 +142,13 @@
+ 	
+ 	if(vd->channels == 0)
+ 	{
+-		MSG("No inputs avaliable.");
++		MSG("No inputs available.");
+ 		return(-1);
+ 	}
+ 	
+ 	if(src->list & SRC_LIST_INPUTS)
+ 	{
+-		HEAD("--- Avaliable inputs:");
++		HEAD("--- Available inputs:");
+ 		
+ 		count = 0;
+ 		vc->channel = count;
+@@ -239,7 +239,7 @@
+ 	
+ 	if(vc->tuners == 0)
+ 	{
+-		MSG("No tuners avaliable.");
++		MSG("No tuners available.");
+ 		return(-1);
+ 	}
+ 	
+@@ -369,7 +369,7 @@
+ 	{
+ 		int i;
+ 		
+-		HEAD("--- Avaliable controls:");
++		HEAD("--- Available controls:");
+ 		
+ 		for(i = 0; i < 5; i++)
+ 		{
+@@ -587,7 +587,7 @@
+ 		return(0);
+ 	}
+ 	
+-	/* Find out how many buffers are avaliable. */
++	/* Find out how many buffers are available. */
+ 	if(ioctl(fd, VIDIOCGMBUF, &s->vm) < 0)
+ 	{
+ 		WARN("Error while querying buffers.");
+diff -u fswebcam-20070108/src_v4l2.c fswebcam-20070108new/src_v4l2.c
+--- fswebcam-20070108/src_v4l2.c	2009-05-03 11:31:02.000000000 +0200
++++ fswebcam-20070108new/src_v4l2.c	2009-05-03 11:32:14.000000000 +0200
+@@ -114,7 +114,7 @@
+ 	
+ 	if(src->list & SRC_LIST_INPUTS)
+ 	{
+-		HEAD("--- Avaliable inputs:");
++		HEAD("--- Available inputs:");
+ 		
+ 		input.index = count;
+ 		while(!ioctl(s->fd, VIDIOC_ENUMINPUT, &input))

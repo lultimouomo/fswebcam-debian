@@ -37,26 +37,9 @@ Licence (videodev_mjpeg.h):
    along with this program; if not, write to the Free Software
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-License (fswebcam-20070108.ebuild):
-
-   Copyright 1999-2005 Gentoo Foundation
-   
-   This program is distributed under the terms of the GNU General Public
-   License, version 2. You may use, modify, and redistribute it under the
-   terms of this license.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-   GNU General Public License for more details.
-   
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-
 License (everything else):
 
-   Copyright 2004-2007 Philip Heron <phil@firestorm.cx>
+   Copyright 2004-2009 Philip Heron <phil@firestorm.cx>
 
    This program is distributed under the terms of the GNU General Public
    License, version 2. You may use, modify, and redistribute it under the
@@ -71,9 +54,8 @@ License (everything else):
    along with this program; if not, write to the Free Software
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-The Debian packaging is © 2009, Luca Niccoli <lultimouomo@gmail.com>,
-derived from the original packaging by Philip Heron, and is licensed 
-under the same license as the upstream source, see above.
+The Debian packaging is © 2010, Luca Niccoli <lultimouomo@gmail.com> and is
+licensed under the same license as the upstream source, see above.
 
 On Debian GNU/Linux systems, the complete text of the GNU General Public
 License can be found in `/usr/share/common-licenses/GPL-2' file.

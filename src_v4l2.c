@@ -1,6 +1,6 @@
 /* fswebcam - FireStorm.cx's webcam generator                */
 /*===========================================================*/
-/* Copyright (C)2005-2006 Philip Heron <phil@firestorm.cx>   */
+/* Copyright (C)2005-2009 Philip Heron <phil@firestorm.cx>   */
 /*                                                           */
 /* This program is distributed under the terms of the GNU    */
 /* General Public License, version 2. You may use, modify,   */
@@ -112,6 +112,8 @@ int src_v4l2_set_input(src_t *src)
 	struct v4l2_input input;
 	int count = 0, i = -1;
 	
+	memset(&input, 0, sizeof(input));
+	
 	if(src->list & SRC_LIST_INPUTS)
 	{
 		HEAD("--- Avaliable inputs:");
@@ -206,7 +208,7 @@ int src_v4l2_set_input(src_t *src)
 		
 		/* Query the tuners capabilities. */
 		
-		memset(&tuner, 0, sizeof(struct v4l2_tuner));
+		memset(&tuner, 0, sizeof(tuner));
 		tuner.index = input.tuner;
 		
 		if(ioctl(s->fd, VIDIOC_G_TUNER, &tuner) == -1)
@@ -237,7 +239,7 @@ int src_v4l2_set_input(src_t *src)
 		DEBUG("afc = %08X", tuner.afc);
 		
 		/* Set the frequency. */
-		memset(&freq, 0, sizeof(struct v4l2_frequency));
+		memset(&freq, 0, sizeof(freq));
 		freq.tuner = input.tuner;
 		freq.type = V4L2_TUNER_ANALOG_TV;
 		freq.frequency = (src->frequency / 1000) * 16;
@@ -265,6 +267,9 @@ int src_v4l2_show_control(src_t *src, struct v4l2_queryctrl *queryctrl)
 	int m;
 	
 	if(queryctrl->flags & V4L2_CTRL_FLAG_DISABLED) return(0);
+	
+	memset(&querymenu, 0, sizeof(querymenu));
+	memset(&control, 0, sizeof(control));
 	
 	if(queryctrl->type != V4L2_CTRL_TYPE_BUTTON)
 	{
@@ -315,7 +320,6 @@ int src_v4l2_show_control(src_t *src, struct v4l2_queryctrl *queryctrl)
 		
 	case V4L2_CTRL_TYPE_MENU:
 		
-		memset(&querymenu, 0, sizeof(querymenu));
 		querymenu.id = queryctrl->id;
 		
 		t = calloc((queryctrl->maximum - queryctrl->minimum) + 1, 34);
@@ -369,7 +373,9 @@ int src_v4l2_set_control(src_t *src, struct v4l2_queryctrl *queryctrl)
 	if(src_get_option_by_name(src->option, (char *) queryctrl->name, &sv))
 		return(0);
 	
-	memset(&control, 0, sizeof(struct v4l2_control));
+	memset(&querymenu, 0, sizeof(querymenu));
+	memset(&control, 0, sizeof(control));
+	
 	control.id = queryctrl->id;
 	
 	switch(queryctrl->type)
@@ -420,7 +426,6 @@ int src_v4l2_set_control(src_t *src, struct v4l2_queryctrl *queryctrl)
 	case V4L2_CTRL_TYPE_MENU:
 		
 		/* Scan for a matching value. */
-		memset(&querymenu, 0, sizeof (querymenu));
 		querymenu.id = queryctrl->id;
 		
 		for(iv = queryctrl->minimum; iv <= queryctrl->maximum; iv++)
@@ -473,7 +478,7 @@ int src_v4l2_set_controls(src_t *src)
 	struct v4l2_queryctrl queryctrl;
 	int c;
 	
-	memset(&queryctrl, 0, sizeof(struct v4l2_queryctrl));
+	memset(&queryctrl, 0, sizeof(queryctrl));
 	
 	if(src->list & SRC_LIST_CONTROLS)
 	{
@@ -530,7 +535,7 @@ int src_v4l2_set_pix_format(src_t *src)
 	DEBUG("Device offers the following V4L2 pixel formats:");
 	
 	v4l2_pal = 0;
-	memset(&fmt, 0, sizeof(struct v4l2_fmtdesc));
+	memset(&fmt, 0, sizeof(fmt));
 	fmt.index = v4l2_pal;
 	fmt.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	
@@ -541,7 +546,7 @@ int src_v4l2_set_pix_format(src_t *src)
 		      fmt.pixelformat >> 16, fmt.pixelformat >> 24,
 		      fmt.description);
 		
-		memset(&fmt, 0, sizeof(struct v4l2_fmtdesc));
+		memset(&fmt, 0, sizeof(fmt));
 		fmt.index = ++v4l2_pal;
 		fmt.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	}
@@ -569,7 +574,7 @@ int src_v4l2_set_pix_format(src_t *src)
 	while(v4l2_palette[v4l2_pal].v4l2)
 	{
 		/* Try the palette... */
-		memset(&s->fmt, 0, sizeof(struct v4l2_format));
+		memset(&s->fmt, 0, sizeof(s->fmt));
 		s->fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		s->fmt.fmt.pix.width       = src->width;
 		s->fmt.fmt.pix.height      = src->height;
@@ -605,6 +610,7 @@ int src_v4l2_set_pix_format(src_t *src)
 			{
 				struct v4l2_jpegcompression jpegcomp;
 				
+				memset(&jpegcomp, 0, sizeof(jpegcomp));
 				ioctl(s->fd, VIDIOC_G_JPEGCOMP, &jpegcomp);
 				jpegcomp.jpeg_markers |= V4L2_JPEG_MARKER_DHT;
 				ioctl(s->fd, VIDIOC_S_JPEGCOMP, &jpegcomp);
@@ -623,6 +629,17 @@ int src_v4l2_set_pix_format(src_t *src)
 	return(-1);
 }
 
+int src_v4l2_free_mmap(src_t *src)
+{
+	src_v4l2_t *s = (src_v4l2_t *) src->state;
+	int i;
+	
+	for(i = 0; i < s->req.count; i++)
+		munmap(s->buffer[i].start, s->buffer[i].length);
+	
+	return(0);
+}
+
 int src_v4l2_set_mmap(src_t *src)
 {
 	src_v4l2_t *s = (src_v4l2_t *) src->state;
@@ -630,9 +647,9 @@ int src_v4l2_set_mmap(src_t *src)
 	uint32_t b;
 	
 	/* Does the device support streaming? */
-	if(!s->cap.capabilities & V4L2_CAP_STREAMING) return(-1);
+	if(~s->cap.capabilities & V4L2_CAP_STREAMING) return(-1);
 	
-	memset(&s->req, 0, sizeof(struct v4l2_requestbuffers));
+	memset(&s->req, 0, sizeof(s->req));
 	
 	s->req.count  = 4;
 	s->req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -665,7 +682,7 @@ int src_v4l2_set_mmap(src_t *src)
 	{
 		struct v4l2_buffer buf;
 		
-                memset(&buf, 0, sizeof(struct v4l2_buffer));
+		memset(&buf, 0, sizeof(buf));
 		
 		buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		buf.memory = V4L2_MEMORY_MMAP;
@@ -687,6 +704,8 @@ int src_v4l2_set_mmap(src_t *src)
 		{
 			ERROR("Error mapping buffer %i", b);
 			ERROR("mmap: %s", strerror(errno));
+			s->req.count = b;
+			src_v4l2_free_mmap(src);
 			free(s->buffer);
 			return(-1);
 		}
@@ -698,7 +717,7 @@ int src_v4l2_set_mmap(src_t *src)
 	
 	for(b = 0; b < s->req.count; b++)
 	{
-		memset(&s->buf, 0, sizeof(struct v4l2_buffer));
+		memset(&s->buf, 0, sizeof(s->buf));
 		
 		s->buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		s->buf.memory = V4L2_MEMORY_MMAP;
@@ -707,6 +726,8 @@ int src_v4l2_set_mmap(src_t *src)
 		if(ioctl(s->fd, VIDIOC_QBUF, &s->buf) == -1)
 		{
 			ERROR("VIDIOC_QBUF: %s", strerror(errno));
+			src_v4l2_free_mmap(src);
+			free(s->buffer);
 			return(-1);
 		}
 	}
@@ -717,6 +738,8 @@ int src_v4l2_set_mmap(src_t *src)
 	{
 		ERROR("Error starting stream.");
 		ERROR("VIDIOC_STREAMON: %s", strerror(errno));
+		src_v4l2_free_mmap(src);
+		free(s->buffer);
 		return(-1);
 	}
 	
@@ -727,7 +750,7 @@ int src_v4l2_set_read(src_t *src)
 {
 	src_v4l2_t *s = (src_v4l2_t *) src->state;
 	
-	if(!s->cap.capabilities & V4L2_CAP_READWRITE) return(-1);
+	if(~s->cap.capabilities & V4L2_CAP_READWRITE) return(-1);
 	
 	s->buffer = calloc(1, sizeof(v4l2_buffer_t));
 	if(!s->buffer)
@@ -845,13 +868,7 @@ int src_v4l2_close(src_t *src)
 	if(s->buffer)
 	{
 		if(!s->map) free(s->buffer[0].start);
-		else
-		{
-			int i;
-			
-			for(i = 0; i < s->req.count; i++)
-				munmap(s->buffer[i].start, s->buffer[i].length);
-		}
+		else src_v4l2_free_mmap(src);
 		free(s->buffer);
 	}
 	if(s->fd >= 0) close(s->fd);
@@ -903,7 +920,7 @@ int src_v4l2_grab(src_t *src)
 			}
 		}
 		
-		memset(&s->buf, 0, sizeof(struct v4l2_buffer));
+		memset(&s->buf, 0, sizeof(s->buf));
 		
 		s->buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		s->buf.memory = V4L2_MEMORY_MMAP;

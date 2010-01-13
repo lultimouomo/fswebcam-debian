@@ -1,6 +1,6 @@
 /* fswebcam - Small and simple webcam for *nix               */
 /*===========================================================*/
-/* Copyright (C)2005-2006 Philip Heron <phil@firestorm.cx>   */
+/* Copyright (C)2005-2009 Philip Heron <phil@firestorm.cx>   */
 /*                                                           */
 /* This program is distributed under the terms of the GNU    */
 /* General Public License, version 2. You may use, modify,   */
@@ -1088,7 +1088,7 @@ int fswc_grab(fswebcam_config_t *config)
 	
 	/* Grab (and do nothing with) the skipped frames. */
 	for(frame = 0; frame < config->skipframes; frame++)
-		src_grab(&src);
+		if(src_grab(&src) == -1) break;
 	
 	/* If frames where skipped, inform when normal capture begins. */
 	if(config->skipframes) MSG("Capturing %i frames...", config->frames);
@@ -1626,7 +1626,7 @@ int fswc_add_job(fswebcam_config_t *config, uint16_t id, char *options)
 	else job->options = NULL;
 	
 	/* Increase the size of the job queue. */
-	n = realloc(config->job, sizeof(fswebcam_job_t *) * config->jobs + 1);
+	n = realloc(config->job, sizeof(fswebcam_job_t *) * (config->jobs + 1));
 	if(!n)
 	{
 		ERROR("Out of memory.");

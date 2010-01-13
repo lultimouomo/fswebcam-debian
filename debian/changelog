@@ -1,3 +1,13 @@
+fswebcam (20091224-1) unstable; urgency=low
+
+  * New upstream release. (Closes: #564889)
+  * Switch to dpkg-source 3.0 (quilt) format.
+  * Switch to dh7 minimal rules file.
+  * Don't draw an empty banner.
+  * Bump Standards-Version to 3.8.3 (no changes needed).
+
+ -- Luca Niccoli <lultimouomo@gmail.com>  Wed, 13 Jan 2010 22:24:14 +0100
+
 fswebcam (20070108-1) unstable; urgency=low
 
   [ Luca Niccoli ]

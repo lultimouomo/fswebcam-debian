@@ -1,11 +1,11 @@
-/* fswebcam - FireStorm.cx's webcam generator                */
-/*===========================================================*/
-/* Copyright (C)2005 Philip Heron <phil@firestorm.cx>        */
-/*                                                           */
-/* This program is distributed under the terms of the GNU    */
-/* General Public License, version 2. You may use, modify,   */
-/* and redistribute it under the terms of this license. A    */
-/* copy should be included with this source.                 */
+/* fswebcam - FireStorm.cx's webcam generator                 */
+/*============================================================*/
+/* Copyright (C)2005-2010 Philip Heron <phil@sanslogic.co.uk> */
+/*                                                            */
+/* This program is distributed under the terms of the GNU     */
+/* General Public License, version 2. You may use, modify,    */
+/* and redistribute it under the terms of this license. A     */
+/* copy should be included with this source.                  */
 
 #include <stdint.h>
 #include <sys/time.h>
@@ -32,9 +32,11 @@
 #define SRC_PAL_YUV420P (9)
 #define SRC_PAL_NV12MB  (10)
 #define SRC_PAL_BAYER   (11)
-#define SRC_PAL_RGB565  (12)
-#define SRC_PAL_RGB555  (13)
-#define SRC_PAL_GREY    (14)
+#define SRC_PAL_SGBRG8  (12)
+#define SRC_PAL_SGRBG8  (13)
+#define SRC_PAL_RGB565  (14)
+#define SRC_PAL_RGB555  (15)
+#define SRC_PAL_GREY    (16)
 
 #define SRC_LIST_INPUTS     (1 << 1)
 #define SRC_LIST_TUNERS     (1 << 2)
@@ -85,10 +87,11 @@ typedef struct {
 	int palette;
 	uint32_t width;
 	uint32_t height;
+	uint32_t fps;
 	
 	src_option_t **option;
 	
-	/* Info */
+	/* For calculating capture FPS */
 	uint32_t captured_frames;
 	struct timeval tv_first;
 	struct timeval tv_last;

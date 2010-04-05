@@ -3,7 +3,7 @@ Wed, 28 Jan 2008 16:05:41 +0100.
 
 It was downloaded from http://www.firestorm.cx/fswebcam/files/
 
-Upstream author: Philip Heron <phil@firestorm.cx>
+Upstream author: Philip Heron <phil@sanslogic.co.uk>
 
 Licence (videodev_mjpeg.h):
 
@@ -39,7 +39,7 @@ Licence (videodev_mjpeg.h):
 
 License (everything else):
 
-   Copyright 2004-2009 Philip Heron <phil@firestorm.cx>
+   Copyright 2004-2009 Philip Heron <phil@sanslogic.co.uk>
 
    This program is distributed under the terms of the GNU General Public
    License, version 2. You may use, modify, and redistribute it under the

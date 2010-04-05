@@ -2,56 +2,11 @@
 # Author: Luca Niccoli <lultimouomo@gmail.com>
 # Forwarded: By mail
 
-diff -u a/src_v4l1.c b/src_v4l1.c
---- a/src_v4l1.c	2009-12-23 17:01:47.000000000 +0100
-+++ b/src_v4l1.c	2010-01-13 00:44:17.423625576 +0100
-@@ -142,13 +142,13 @@
- 	
- 	if(vd->channels == 0)
- 	{
--		MSG("No inputs avaliable.");
-+		MSG("No inputs available.");
- 		return(-1);
- 	}
- 	
- 	if(src->list & SRC_LIST_INPUTS)
- 	{
--		HEAD("--- Avaliable inputs:");
-+		HEAD("--- Available inputs:");
- 		
- 		count = 0;
- 		vc->channel = count;
-@@ -239,7 +239,7 @@
- 	
- 	if(vc->tuners == 0)
- 	{
--		MSG("No tuners avaliable.");
-+		MSG("No tuners available.");
- 		return(-1);
- 	}
- 	
-@@ -371,7 +371,7 @@
- 	{
- 		int i;
- 		
--		HEAD("--- Avaliable controls:");
-+		HEAD("--- Available controls:");
- 		
- 		for(i = 0; i < 5; i++)
- 		{
-@@ -603,7 +603,7 @@
- 		return(0);
- 	}
- 	
--	/* Find out how many buffers are avaliable. */
-+	/* Find out how many buffers are available. */
- 	if(ioctl(fd, VIDIOCGMBUF, &s->vm) < 0)
- 	{
- 		WARN("Error while querying buffers.");
-diff -u a/src_v4l2.c b/src_v4l2.c
---- a/src_v4l2.c	2009-12-23 17:16:51.000000000 +0100
-+++ b/src_v4l2.c	2010-01-13 00:44:17.424624935 +0100
-@@ -116,7 +116,7 @@
+Index: fswebcam-20100401/src_v4l2.c
+===================================================================
+--- fswebcam-20100401.orig/src_v4l2.c	2010-04-05 13:02:42.667387717 +0200
++++ fswebcam-20100401/src_v4l2.c	2010-04-05 13:04:56.221388556 +0200
+@@ -118,7 +118,7 @@
  	
  	if(src->list & SRC_LIST_INPUTS)
  	{

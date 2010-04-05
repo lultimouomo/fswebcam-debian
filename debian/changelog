@@ -1,3 +1,12 @@
+fswebcam (20100401-1) unstable; urgency=low
+
+  * New upstream release.
+  * Remove patches merged upstream.
+  * Update upstream email address.
+  * Bump Standards-Version to 3.8.4 (no changes needed).
+
+ -- Luca Niccoli <lultimouomo@gmail.com>  Mon, 05 Apr 2010 13:18:29 +0200
+
 fswebcam (20091224-1) unstable; urgency=low
 
   * New upstream release. (Closes: #564889)

@@ -1,11 +1,11 @@
-/* fswebcam - FireStorm.cx's webcam generator                */
-/*===========================================================*/
-/* Copyright (C)2005-2006 Philip Heron <phil@firestorm.cx>   */
-/*                                                           */
-/* This program is distributed under the terms of the GNU    */
-/* General Public License, version 2. You may use, modify,   */
-/* and redistribute it under the terms of this license. A    */
-/* copy should be included with this source.                 */
+/* fswebcam - FireStorm.cx's webcam generator                 */
+/*============================================================*/
+/* Copyright (C)2005-2010 Philip Heron <phil@sanslogic.co.uk> */
+/*                                                            */
+/* This program is distributed under the terms of the GNU     */
+/* General Public License, version 2. You may use, modify,    */
+/* and redistribute it under the terms of this license. A     */
+/* copy should be included with this source.                  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -71,6 +71,8 @@ int src_raw_open(src_t *src)
 		s->size = (src->width * src->height * 3) / 2;
 		break;
 	case SRC_PAL_BAYER:
+	case SRC_PAL_SGBRG8:
+	case SRC_PAL_SGRBG8:
 	case SRC_PAL_GREY:
 		s->size = src->width * src->height;
 		break;

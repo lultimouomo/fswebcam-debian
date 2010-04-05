@@ -2,8 +2,10 @@
 # Author: Luca Niccoli <lultimouomo@gmail.com>
 # Forwarded: not-needed
 
---- a/src_v4l1.c	2006-12-10 20:09:15.000000000 +0100
-+++ b/src_v4l1.c	2009-02-03 01:46:16.000000000 +0100
+Index: fswebcam-20100401/src_v4l1.c
+===================================================================
+--- fswebcam-20100401.orig/src_v4l1.c	2010-03-25 00:48:36.000000000 +0100
++++ fswebcam-20100401/src_v4l1.c	2010-04-05 13:01:32.000000000 +0200
 @@ -19,7 +19,7 @@
  #include <errno.h>
  #include <sys/ioctl.h>
@@ -13,9 +15,10 @@
  #include "videodev_mjpeg.h"
  #include "src.h"
  #include "log.h"
-
---- a/src_v4l2.c	2006-12-10 22:03:55.000000000 +0100
-+++ b/src_v4l2.c	2009-02-03 01:46:08.000000000 +0100
+Index: fswebcam-20100401/src_v4l2.c
+===================================================================
+--- fswebcam-20100401.orig/src_v4l2.c	2010-03-30 23:53:08.000000000 +0200
++++ fswebcam-20100401/src_v4l2.c	2010-04-05 13:01:32.000000000 +0200
 @@ -19,7 +19,7 @@
  #include <errno.h>
  #include <sys/ioctl.h>

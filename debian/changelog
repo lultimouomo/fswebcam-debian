@@ -1,3 +1,15 @@
+fswebcam (20101118-1) unstable; urgency=low
+
+  * New upstream release (Closes: #604121)
+  * Enable libgd fontconfig support if available. Default to "sans:10".
+    You'll need libgd2-xpm to use this feature.
+  * Add S561 compressed palette support.
+  * Fix small memory leak in the logging system.
+  * Add option to swap colour channels in the image.
+  * Bump Standards-Version to 3.9.1 (make use of architecture wildcard).
+
+ -- Luca Niccoli <lultimouomo@gmail.com>  Sun, 06 Feb 2011 15:06:25 +0100
+
 fswebcam (20100622-1) unstable; urgency=low
 
   * New upstream release. (Closes: #581518)

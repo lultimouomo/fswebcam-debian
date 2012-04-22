@@ -1,6 +1,6 @@
 /* fswebcam - FireStorm.cx's webcam generator                 */
 /*============================================================*/
-/* Copyright (C)2005-2010 Philip Heron <phil@sanslogic.co.uk> */
+/* Copyright (C)2005-2011 Philip Heron <phil@sanslogic.co.uk> */
 /*                                                            */
 /* This program is distributed under the terms of the GNU     */
 /* General Public License, version 2. You may use, modify,    */
@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <gd.h>
 #include "parse.h"
 #include "log.h"

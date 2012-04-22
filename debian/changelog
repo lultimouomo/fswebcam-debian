@@ -1,3 +1,10 @@
+fswebcam (20110717-1) unstable; urgency=low
+
+  * New upstream release (Closes: #655138)
+  * Bump Standards-Version to 3.9.3 (no changes needed).
+
+ -- Luca Niccoli <lultimouomo@gmail.com>  Sun, 22 Apr 2012 23:59:34 +0200
+
 fswebcam (20101118-2) unstable; urgency=low
 
   * videodev.h has moved out of build-essentials, get it from libv4l-dev.

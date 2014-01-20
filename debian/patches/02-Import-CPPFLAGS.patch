@@ -1,0 +1,22 @@
+From: Luca Niccoli <lultimouomo@gmail.com>
+Date: Mon, 20 Jan 2014 23:39:49 +0100
+Subject: Import CPPFLAGS during build 
+
+Signed-off-by: Luca Niccoli <lultimouomo@gmail.com>
+---
+ Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index c91e78c..ab6781c 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -10,7 +10,7 @@ mandir      = @mandir@
+ datarootdir = @datarootdir@
+ 
+ CC      = @CC@
+-CFLAGS  = @CFLAGS@ @DEFS@
++CFLAGS  = @CPPFLAGS@ @CFLAGS@ @DEFS@
+ LDFLAGS = @LDFLAGS@
+ 
+ OBJS  = fswebcam.o log.o effects.o parse.o src.o @SRC_OBJS@

@@ -1,6 +1,6 @@
 /* fswebcam - FireStorm.cx's webcam generator                */
 /*===========================================================*/
-/* Copyright (C)2005-2006 Philip Heron <phil@firestorm.cx>   */
+/* Copyright (C)2005-2009 Philip Heron <phil@firestorm.cx>   */
 /*                                                           */
 /* This program is distributed under the terms of the GNU    */
 /* General Public License, version 2. You may use, modify,   */
@@ -127,6 +127,7 @@ char *vmake_message(const char *fmt, va_list ap)
 		p = np;
 	}
 	
+	free(p);
         return(NULL);
 }
 

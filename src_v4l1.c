@@ -1,6 +1,6 @@
 /* fswebcam - FireStorm.cx's webcam generator                */
 /*===========================================================*/
-/* Copyright (C)2005-2006 Philip Heron <phil@firestorm.cx>   */
+/* Copyright (C)2005-2009 Philip Heron <phil@firestorm.cx>   */
 /*                                                           */
 /* This program is distributed under the terms of the GNU    */
 /* General Public License, version 2. You may use, modify,   */
@@ -358,6 +358,8 @@ int src_v4l_set_picture(src_t *src, int fd, struct video_capability *vd)
 	int v4l_pal;
 	char *value;
 	
+	memset(&vp, 0, sizeof(vp));
+	
 	if(ioctl(fd, VIDIOCGPICT, &vp) < 0)
 	{
 		ERROR("Error getting picture information.");
@@ -373,7 +375,7 @@ int src_v4l_set_picture(src_t *src, int fd, struct video_capability *vd)
 		
 		for(i = 0; i < 5; i++)
 		{
-			char *name;
+			char *name = NULL;
 			int value;
 			char t[64];
 			
@@ -440,6 +442,8 @@ int src_v4l_set_picture(src_t *src, int fd, struct video_capability *vd)
 	if(src->palette == SRC_PAL_JPEG)
 	{
 		struct mjpeg_params mparm;
+		
+		memset(&mparm, 0, sizeof(mparm));
 		
 		if(ioctl(s->fd, MJPIOC_G_PARAMS, &mparm))
 		{
@@ -555,6 +559,18 @@ int src_v4l_set_picture(src_t *src, int fd, struct video_capability *vd)
 	return(-1);
 }
 
+int src_v4l_free_mmap(src_t *src)
+{
+	src_v4l_t *s = (src_v4l_t *) src->state;
+	
+	if(src->palette == SRC_PAL_JPEG)
+		munmap(s->map, s->mjpeg_breq.count * s->mjpeg_breq.size);
+	else
+		munmap(s->map, s->vm.size);
+	
+	return(0);
+}
+
 int src_v4l_set_mmap(src_t *src, int fd)
 {
 	src_v4l_t *s = (src_v4l_t *) src->state;
@@ -621,6 +637,7 @@ int src_v4l_set_mmap(src_t *src, int fd)
 		{
 			WARN("Error while requesting buffer %i to capture an image.", frame);
 			WARN("VIDIOCMCAPTURE: %s", strerror(errno));
+			src_v4l_free_mmap(src);
 			return(-1);
 		}
 	}
@@ -696,6 +713,10 @@ int src_v4l_open(src_t *src)
 	}
 	
 	src->state = (void *) s;
+	
+	memset(&vd, 0, sizeof(vd));
+	memset(&vc, 0, sizeof(vc));
+	memset(&vt, 0, sizeof(vt));
 	
 	/* Open the device. */
 	s->fd = open(src->source, O_RDWR | O_NONBLOCK);
@@ -786,11 +807,7 @@ int src_v4l_close(src_t *src)
 	
 	if(s->fd >= 0)
 	{
-		if(s->map)
-		{
-			if(src->palette == SRC_PAL_JPEG) munmap(s->map, s->mjpeg_breq.count * s->mjpeg_breq.size);
-			else munmap(s->map, s->vm.size);
-		}
+		if(s->map) src_v4l_free_mmap(src);
 		close(s->fd);
 		MSG("%s closed.", src->source);
 	}
@@ -810,7 +827,7 @@ int src_v4l_grab_mjpeg(src_t *src)
 	{
 		if(ioctl(s->fd, MJPIOC_QBUF_CAPT, &s->mjpeg_bsync.frame))
 		{
-			ERROR("Error quieng buffer.");
+			ERROR("Error queing buffer.");
 			ERROR("MJPIOC_QBUF_CAPT: %s", strerror(errno));
 			return(-1);
 		}

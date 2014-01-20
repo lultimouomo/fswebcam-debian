@@ -1,4 +1,21 @@
 
+fswebcam-20091224
+  
+  - Fix memset() error in src_v4l1.c introduced in yesterdays release.
+    (Thomas Spahni)
+
+fswebcam-20091223
+  
+  - Stop configure warning about datarootdir being ignored.
+  - Updated the videodev.h and videodev2.h header files.
+  - Corrected a number of memory leaks and a potential buffer overflow.
+    (Thomas Spahni)
+  - Escape minus signs in the man page. (Luca Niccoli)
+  - Removed debian/ subdirectory. (Luca Niccoli)
+  - Removed spec and ebuild files.
+  - Free mmap()'s on error.
+  - Stop skipping frames on error.
+
 fswebcam-20070108
   
   - Fixed R<>B channel swap when using [M]JPEG or PNG.

@@ -1,6 +1,6 @@
 /* fswebcam - FireStorm.cx's webcam generator                */
 /*===========================================================*/
-/* Copyright (C)2005-2006 Philip Heron <phil@firestorm.cx>   */
+/* Copyright (C)2005-2009 Philip Heron <phil@firestorm.cx>   */
 /*                                                           */
 /* This program is distributed under the terms of the GNU    */
 /* General Public License, version 2. You may use, modify,   */
@@ -108,7 +108,11 @@ int src_open(src_t *src, char *source)
 			else free(s);
 			
 			i = src_mod[src->type]->open(src);
-			if(i < 0) return(-1);
+			if(i < 0)
+			{
+				free(s);
+				return(-1);
+			}
 			
 			return(0);
 		}
@@ -121,6 +125,7 @@ int src_open(src_t *src, char *source)
 	if(stat(s, &st))
 	{
 		ERROR("stat: %s", strerror(errno));
+		free(s);
 		return(-1);
 	}
 	
@@ -149,6 +154,8 @@ int src_open(src_t *src, char *source)
 	}
 	
 	ERROR("Unable to find a source module that can read %s.", source);
+	
+	free(s);
 	
 	return(-1);
 }
@@ -182,6 +189,8 @@ int src_close(src_t *src)
 	}
 	
 	r = src_mod[src->type]->close(src);
+	
+	if(src->source) free(src->source);
 	
 	return(r);
 }

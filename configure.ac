@@ -1,5 +1,5 @@
 
-AC_INIT(fswebcam, 20070108, phil@firestorm.cx)
+AC_INIT(fswebcam, 20091224, phil@firestorm.cx)
 AC_PROG_CC
 
 AC_ARG_ENABLE(32bit-buffer,
@@ -42,7 +42,7 @@ fi
 
 AC_CHECK_LIB(gd, gdImageStringFT, HAVE_FT2="yes",,)
 if test "$HAVE_FT2" != "yes"; then
-	AC_MSG_ERROR([GD doesn't have FreeType2 font support!])
+	AC_MSG_ERROR([GD does not have FreeType2 font support!])
 fi
 
 AC_CHECK_LIB(gd, gdImageJpeg, HAVE_JPEG="yes",,)

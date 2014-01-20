@@ -46,6 +46,8 @@ typedef struct {
 	
 } src_v4l2_t;
 
+static int src_v4l2_close(src_t *src);
+
 typedef struct {
 	uint16_t src;
 	uint32_t v4l2;
@@ -66,6 +68,7 @@ v4l2_palette_t v4l2_palette[] = {
 	{ SRC_PAL_SGRBG8,  V4L2_PIX_FMT_SGRBG8 },
 	{ SRC_PAL_RGB565,  V4L2_PIX_FMT_RGB565 },
 	{ SRC_PAL_RGB555,  V4L2_PIX_FMT_RGB555 },
+	{ SRC_PAL_Y16,     V4L2_PIX_FMT_Y16    },
 	{ SRC_PAL_GREY,    V4L2_PIX_FMT_GREY   },
 	{ 0, 0 }
 };
@@ -118,7 +121,7 @@ int src_v4l2_set_input(src_t *src)
 	
 	if(src->list & SRC_LIST_INPUTS)
 	{
-		HEAD("--- Avaliable inputs:");
+		HEAD("--- Available inputs:");
 		
 		input.index = count;
 		while(!ioctl(s->fd, VIDIOC_ENUMINPUT, &input))
@@ -799,7 +802,7 @@ int src_v4l2_set_read(src_t *src)
 	return(0);
 }
 
-int src_v4l2_open(src_t *src)
+static int src_v4l2_open(src_t *src)
 {
 	src_v4l2_t *s;
 	
@@ -834,14 +837,14 @@ int src_v4l2_open(src_t *src)
 	/* Get the device capabilities. */
 	if(src_v4l2_get_capability(src))
 	{
-		src_close(src);
+		src_v4l2_close(src);
 		return(-2);
 	}
 	
 	/* Set the input. */
 	if(src_v4l2_set_input(src))
 	{
-		src_close(src);
+		src_v4l2_close(src);
 		return(-1);
 	}
 	
@@ -851,7 +854,7 @@ int src_v4l2_open(src_t *src)
 	/* Set the pixel format. */
 	if(src_v4l2_set_pix_format(src))
 	{
-		src_close(src);
+		src_v4l2_close(src);
 		return(-1);
 	}
 	
@@ -878,7 +881,7 @@ int src_v4l2_open(src_t *src)
 		if(src_v4l2_set_read(src))
 		{
 			ERROR("Unable to use read.");
-			src_close(src);
+			src_v4l2_close(src);
 			return(-1);
 		}
 	}
@@ -888,7 +891,7 @@ int src_v4l2_open(src_t *src)
 	return(0);
 }
 
-int src_v4l2_close(src_t *src)
+static int src_v4l2_close(src_t *src)
 {
 	src_v4l2_t *s = (src_v4l2_t *) src->state;
 	
@@ -904,7 +907,7 @@ int src_v4l2_close(src_t *src)
 	return(0);
 }
 
-int src_v4l2_grab(src_t *src)
+static int src_v4l2_grab(src_t *src)
 {
 	src_v4l2_t *s = (src_v4l2_t *) src->state;
 	

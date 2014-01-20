@@ -1,10 +1,20 @@
 
+fswebcam-20100622
+  
+  - Add basic Y16 support. (16-bit greyscale, gets shifted down to 8-bit)
+  - A few fixes for the V4L1 source and other areas. (Pete Zaitcev)
+  - Format conversions have been separated out from fswebcam.c.
+
+fswebcam-20100405
+  
+  - Fix typo and add missing code for parsing --fps option. (Luca Niccoli)
+
 fswebcam-20100401
   
   - LDFLAGS should come after object files. (Thomas Spahni)
   - Don't display banner if the font fails to load. (Luca Niccoli)
   - Fix typos.
-  - Added SGBRG8 and SGRBG8 palette types (for V4L2 sources only). (
+  - Added SGBRG8 and SGRBG8 palette types (for V4L2 sources only).
   - Added --fps option.
 
 fswebcam-20091224

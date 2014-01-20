@@ -1,6 +1,6 @@
 /* fswebcam - FireStorm.cx's webcam generator                 */
 /*============================================================*/
-/* Copyright (C)2005-2010 Philip Heron <phil@sanslogic.co.uk> */
+/* Copyright (C)2005-2011 Philip Heron <phil@sanslogic.co.uk> */
 /*                                                            */
 /* This program is distributed under the terms of the GNU     */
 /* General Public License, version 2. You may use, modify,    */
@@ -193,7 +193,7 @@ int parse_font(char *src, char **font, int *fontsize)
 	l = strlen(src);
 	
 	/* Is the last element a font-size? */
-	if(p = strrchr(src, ':'))
+	if((p = strrchr(src, ':')))
 	{
 		int i = atoi(p + 1);
 		

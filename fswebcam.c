@@ -1,6 +1,6 @@
 /* fswebcam - Small and simple webcam for *nix                */
 /*============================================================*/
-/* Copyright (C)2005-2010 Philip Heron <phil@sanslogic.co.uk> */
+/* Copyright (C)2005-2011 Philip Heron <phil@sanslogic.co.uk> */
 /*                                                            */
 /* This program is distributed under the terms of the GNU     */
 /* General Public License, version 2. You may use, modify,    */
@@ -224,11 +224,15 @@ char *fswc_strftime(char *dst, size_t max, char *src,
 {
 	struct tm tm_timestamp;
 	
+	/* Clear target string, and verify source is set */
+	*dst = '\0';
+	if(!src) return(dst);
+	
 	/* Set the time structure. */
 	if(gmt) gmtime_r(&timestamp, &tm_timestamp);
 	else localtime_r(&timestamp, &tm_timestamp);
 	
-	*dst = '\0';
+	/* Create the string */
 	strftime(dst, max, src, &tm_timestamp);
 	
 	return(dst);
@@ -619,8 +623,7 @@ int fswc_grab(fswebcam_config_t *config)
 			if(!f) ERROR("fopen: %s", strerror(errno));
 			else
 			{
-				size_t l;
-				l = fwrite(src.img, 1, src.length, f);
+				fwrite(src.img, 1, src.length, f);
 				fclose(f);
 			}
 		}

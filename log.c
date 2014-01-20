@@ -1,6 +1,6 @@
 /* fswebcam - FireStorm.cx's webcam generator                 */
 /*============================================================*/
-/* Copyright (C)2005-2010 Philip Heron <phil@sanslogic.co.uk> */
+/* Copyright (C)2005-2011 Philip Heron <phil@sanslogic.co.uk> */
 /*                                                            */
 /* This program is distributed under the terms of the GNU     */
 /* General Public License, version 2. You may use, modify,    */
@@ -147,7 +147,6 @@ void log_msg(char *file, char *function, int line, char l, char *s, ... )
 {
 	va_list ap;
 	char *msg, *o;
-	size_t ll;
 	
 	/* Is logging enabled? */
 	if(fd_log == -1) return;
@@ -191,7 +190,7 @@ void log_msg(char *file, char *function, int line, char l, char *s, ... )
 		if(!use_syslog) fprintf(stderr, "\033[%im", colour);
 	}
 	
-	if(!use_syslog) ll = write(fd_log, o, strlen(o));
+	if(!use_syslog) write(fd_log, o, strlen(o));
 	else
 	{
 		int p = LOG_INFO;

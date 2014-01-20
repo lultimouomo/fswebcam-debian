@@ -1,4 +1,4 @@
-.TH FSWEBCAM "1" "22 June 2010" "fswebcam 20100522" "User Commands"
+.TH FSWEBCAM "1" "18 November 2010" "fswebcam 20101118" "User Commands"
 .SH NAME
 fswebcam \- Small and simple webcam for *nix.
 .SH SYNOPSIS
@@ -131,6 +131,8 @@ PNG
 JPEG
 .br
 MJPEG
+.br
+S561
 .br
 RGB32
 .br
@@ -269,11 +271,11 @@ Default is "#00FFFFFF".
 
 .TP
 \fB\-\-font\fR \fI<[file or font name]:[font size]>\fR
-Set the font used in the banner. If no path is specified the path in the GDFONTPATH environment variable is searched for the font.
+Set the font used in the banner. If no path is specified the path in the GDFONTPATH environment variable is searched for the font. Fontconfig names may also be used if the GD library has support.
 .IP
 If no font size is specified the default of "10" will be used.
 .IP
-Default is "luxisr:10".
+Default is "sans:10".
 
 .TP
 \fB\-\-no\-shadow\fR
@@ -398,6 +400,16 @@ Apply a simple deinterlacer to the image.
 .TP
 \fB\-\-invert\fR
 Invert all the colours in the image, creating a negative.
+
+.TP
+\fB\-\-greyscale\fR
+Remove all colour from the image.
+
+.TP
+\fB\-\-swapchannels\fR <c1c2>
+Swap colour channels c1 and c2. Valid channels are R, G and B \-\- for Red, Green and Blue channels respectively.
+
+Example: "\-\-swapchannels RB" will swap the red and blue channels.
 
 .TP
 \fB\-\-exec\fR <command>

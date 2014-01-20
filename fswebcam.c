@@ -40,57 +40,59 @@
 #define FORMAT_JPEG (0)
 #define FORMAT_PNG  (1)
 
-#define OPTBASE (128)
-#define OPT_VERSION         (OPTBASE + 0)
-#define OPT_PID             (OPTBASE + 1)
-#define OPT_OFFSET          (OPTBASE + 2)
-#define OPT_LIST_INPUTS     (OPTBASE + 3)
-#define OPT_LIST_TUNERS     (OPTBASE + 4)
-#define OPT_LIST_FORMATS    (OPTBASE + 5)
-#define OPT_LIST_CONTROLS   (OPTBASE + 6)
-#define OPT_LIST_FRAMESIZES (OPTBASE + 7)
-#define OPT_LIST_FRAMERATES (OPTBASE + 8)
-#define OPT_BRIGHTNESS      (OPTBASE + 9)
-#define OPT_HUE             (OPTBASE + 10)
-#define OPT_COLOUR          (OPTBASE + 11)
-#define OPT_CONTRAST        (OPTBASE + 12)
-#define OPT_WHITENESS       (OPTBASE + 13)
-#define OPT_REVERT          (OPTBASE + 14)
-#define OPT_FLIP            (OPTBASE + 15)
-#define OPT_CROP            (OPTBASE + 16)
-#define OPT_SCALE           (OPTBASE + 17)
-#define OPT_ROTATE          (OPTBASE + 18)
-#define OPT_DEINTERLACE     (OPTBASE + 19)
-#define OPT_INVERT          (OPTBASE + 20)
-#define OPT_GREYSCALE       (OPTBASE + 21)
-#define OPT_NO_BANNER       (OPTBASE + 22)
-#define OPT_TOP_BANNER      (OPTBASE + 23)
-#define OPT_BOTTOM_BANNER   (OPTBASE + 24)
-#define OPT_BG_COLOUR       (OPTBASE + 25)
-#define OPT_BL_COLOUR       (OPTBASE + 26)
-#define OPT_FG_COLOUR       (OPTBASE + 27)
-#define OPT_FONT            (OPTBASE + 28)
-#define OPT_NO_SHADOW       (OPTBASE + 29)
-#define OPT_SHADOW          (OPTBASE + 30)
-#define OPT_TITLE           (OPTBASE + 31)
-#define OPT_NO_TITLE        (OPTBASE + 32)
-#define OPT_SUBTITLE        (OPTBASE + 33)
-#define OPT_NO_SUBTITLE     (OPTBASE + 34)
-#define OPT_TIMESTAMP       (OPTBASE + 35)
-#define OPT_NO_TIMESTAMP    (OPTBASE + 36)
-#define OPT_GMT             (OPTBASE + 37)
-#define OPT_INFO            (OPTBASE + 38)
-#define OPT_NO_INFO         (OPTBASE + 39)
-#define OPT_UNDERLAY        (OPTBASE + 40)
-#define OPT_NO_UNDERLAY     (OPTBASE + 41)
-#define OPT_OVERLAY         (OPTBASE + 42)
-#define OPT_NO_OVERLAY      (OPTBASE + 43)
-#define OPT_JPEG            (OPTBASE + 44)
-#define OPT_PNG             (OPTBASE + 45)
-#define OPT_SAVE            (OPTBASE + 46)
-#define OPT_EXEC            (OPTBASE + 47)
-#define OPT_DUMPFRAME       (OPTBASE + 48)
-#define OPT_FPS             (OPTBASE + 49)
+enum fswc_options {
+	OPT_VERSION = 128,
+	OPT_PID,
+	OPT_OFFSET,
+	OPT_LIST_INPUTS,
+	OPT_LIST_TUNERS,
+	OPT_LIST_FORMATS,
+	OPT_LIST_CONTROLS,
+	OPT_LIST_FRAMESIZES,
+	OPT_LIST_FRAMERATES,
+	OPT_BRIGHTNESS,
+	OPT_HUE,
+	OPT_COLOUR,
+	OPT_CONTRAST,
+	OPT_WHITENESS,
+	OPT_REVERT,
+	OPT_FLIP,
+	OPT_CROP,
+	OPT_SCALE,
+	OPT_ROTATE,
+	OPT_DEINTERLACE,
+	OPT_INVERT,
+	OPT_GREYSCALE,
+	OPT_SWAPCHANNELS,
+	OPT_NO_BANNER,
+	OPT_TOP_BANNER,
+	OPT_BOTTOM_BANNER,
+	OPT_BG_COLOUR,
+	OPT_BL_COLOUR,
+	OPT_FG_COLOUR,
+	OPT_FONT,
+	OPT_NO_SHADOW,
+	OPT_SHADOW,
+	OPT_TITLE,
+	OPT_NO_TITLE,
+	OPT_SUBTITLE,
+	OPT_NO_SUBTITLE,
+	OPT_TIMESTAMP,
+	OPT_NO_TIMESTAMP,
+	OPT_GMT,
+	OPT_INFO,
+	OPT_NO_INFO,
+	OPT_UNDERLAY,
+	OPT_NO_UNDERLAY,
+	OPT_OVERLAY,
+	OPT_NO_OVERLAY,
+	OPT_JPEG,
+	OPT_PNG,
+	OPT_SAVE,
+	OPT_EXEC,
+	OPT_DUMPFRAME,
+	OPT_FPS,
+};
 
 typedef struct {
 	
@@ -633,6 +635,9 @@ int fswc_grab(fswebcam_config_t *config)
 		case SRC_PAL_MJPEG:
 			fswc_add_image_jpeg(&src, abitmap);
 			break;
+		case SRC_PAL_S561:
+			fswc_add_image_s561(abitmap, src.img, src.length, src.width, src.height, src.palette);
+			break;
 		case SRC_PAL_RGB32:
 			fswc_add_image_rgb32(&src, abitmap);
 			break;
@@ -648,7 +653,7 @@ int fswc_grab(fswebcam_config_t *config)
 		case SRC_PAL_BAYER:
 		case SRC_PAL_SGBRG8:
 		case SRC_PAL_SGRBG8:
-			fswc_add_image_bayer(&src, abitmap);
+			fswc_add_image_bayer(abitmap, src.img, src.length, src.width, src.height, src.palette);
 			break;
 		case SRC_PAL_YUYV:
 		case SRC_PAL_UYVY:
@@ -737,7 +742,7 @@ int fswc_grab(fswebcam_config_t *config)
 	config->bg_colour    = 0x40263A93;
 	config->bl_colour    = 0x00FF0000;
 	config->fg_colour    = 0x00FFFFFF;
-	config->font         = strdup("luxisr");
+	config->font         = strdup("sans");
 	config->fontsize     = 10;
 	config->shadow       = 1;
 	config->title        = NULL;
@@ -800,6 +805,10 @@ int fswc_grab(fswebcam_config_t *config)
 		case OPT_GREYSCALE:
 			modified = 1;
 			image = fx_greyscale(image, options);
+			break;
+		case OPT_SWAPCHANNELS:
+			modified = 1;
+			image = fx_swapchannels(image, options);
 			break;
 		case OPT_NO_BANNER:
 			modified = 1;
@@ -1092,6 +1101,7 @@ int fswc_usage()
 	       "     --deinterlace            Reduces interlace artifacts.\n"
 	       "     --invert                 Inverts the images colours.\n"
 	       "     --greyscale              Removes colour from the image.\n"
+	       "     --swapchannels <c1c2>    Swap channels c1 and c2.\n"
 	       "     --no-banner              Hides the banner.\n"
 	       "     --top-banner             Puts the banner at the top.\n"
 	       "     --bottom-banner          Puts the banner at the bottom. (Default)\n"
@@ -1334,6 +1344,7 @@ int fswc_getopts(fswebcam_config_t *config, int argc, char *argv[])
 		{"deinterlace",     no_argument,       0, OPT_DEINTERLACE},
 		{"invert",          no_argument,       0, OPT_INVERT},
 		{"greyscale",       no_argument,       0, OPT_GREYSCALE},
+		{"swapchannels",    required_argument, 0, OPT_SWAPCHANNELS},
 		{"no-banner",       no_argument,       0, OPT_NO_BANNER},
 		{"top-banner",      no_argument,       0, OPT_TOP_BANNER},
 		{"bottom-banner",   no_argument,       0, OPT_BOTTOM_BANNER},
@@ -1590,6 +1601,9 @@ int main(int argc, char *argv[])
 	
 	/* Setup signal handlers. */
 	if(fswc_setup_signals()) return(-1);
+	
+	/* Enable FontConfig support in GD */
+	if(!gdFTUseFontConfig(1)) DEBUG("gd has no fontconfig support");
 	
 	/* Capture the image(s). */
 	if(!config->loop) fswc_grab(config);

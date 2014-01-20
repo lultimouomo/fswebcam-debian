@@ -1,6 +1,6 @@
 /* fswebcam - FireStorm.cx's webcam generator                 */
 /*============================================================*/
-/* Copyright (C)2005-2011 Philip Heron <phil@sanslogic.co.uk> */
+/* Copyright (C)2005-2014 Philip Heron <phil@sanslogic.co.uk> */
 /*                                                            */
 /* This program is distributed under the terms of the GNU     */
 /* General Public License, version 2. You may use, modify,    */
@@ -491,43 +491,22 @@ int src_v4l2_set_controls(src_t *src)
 		HEAD("%-25s %-15s %s", "Available Controls", "Current Value", "Range");
 		MSG("%-25s %-15s %s",  "------------------", "-------------", "-----");
 		
-		/* Display normal controls. */
-		for(c = V4L2_CID_BASE; c < V4L2_CID_LASTP1; c++)
+		/* Display all controls */
+		queryctrl.id = V4L2_CTRL_FLAG_NEXT_CTRL;
+		while (0 == ioctl(s->fd, VIDIOC_QUERYCTRL, &queryctrl))
 		{
-			queryctrl.id = c;
-			
-			if(ioctl(s->fd, VIDIOC_QUERYCTRL, &queryctrl)) continue;
 			src_v4l2_show_control(src, &queryctrl);
-		}
-		
-		/* Display device-specific controls. */
-		for(c = V4L2_CID_PRIVATE_BASE; ; c++)
-		{
-			queryctrl.id = c;
-			
-			if(ioctl(s->fd, VIDIOC_QUERYCTRL, &queryctrl)) break;
-			src_v4l2_show_control(src, &queryctrl);
+			queryctrl.id |= V4L2_CTRL_FLAG_NEXT_CTRL;
 		}
 	}
 	
-	/* Scan normal controls. */
-	for(c = V4L2_CID_BASE; c < V4L2_CID_LASTP1; c++)
+	/* Set all controls */
+	queryctrl.id = V4L2_CTRL_FLAG_NEXT_CTRL;
+	while (0 == ioctl(s->fd, VIDIOC_QUERYCTRL, &queryctrl))
 	{
-		queryctrl.id = c;
-		
-		if(ioctl(s->fd, VIDIOC_QUERYCTRL, &queryctrl)) continue;
 		src_v4l2_set_control(src, &queryctrl);
+		queryctrl.id |= V4L2_CTRL_FLAG_NEXT_CTRL;
 	}
-	
-	/* Scan device-specific controls. */
-	for(c = V4L2_CID_PRIVATE_BASE; ; c++)
-	{
-		queryctrl.id = c;
-		
-		if(ioctl(s->fd, VIDIOC_QUERYCTRL, &queryctrl)) break;
-		src_v4l2_set_control(src, &queryctrl);
-	}
-	
 	return(0);
 }
 
@@ -721,6 +700,7 @@ int src_v4l2_set_mmap(src_t *src)
 			ERROR("Error querying buffer %i", b);
 			ERROR("VIDIOC_QUERYBUF: %s", strerror(errno));
 			free(s->buffer);
+			s->buffer = NULL;
 			return(-1);
 		}
 		
@@ -735,6 +715,7 @@ int src_v4l2_set_mmap(src_t *src)
 			s->req.count = b;
 			src_v4l2_free_mmap(src);
 			free(s->buffer);
+			s->buffer = NULL;
 			return(-1);
 		}
 		
@@ -756,6 +737,7 @@ int src_v4l2_set_mmap(src_t *src)
 			ERROR("VIDIOC_QBUF: %s", strerror(errno));
 			src_v4l2_free_mmap(src);
 			free(s->buffer);
+			s->buffer = NULL;
 			return(-1);
 		}
 	}
@@ -768,6 +750,7 @@ int src_v4l2_set_mmap(src_t *src)
 		ERROR("VIDIOC_STREAMON: %s", strerror(errno));
 		src_v4l2_free_mmap(src);
 		free(s->buffer);
+		s->buffer = NULL;
 		return(-1);
 	}
 	

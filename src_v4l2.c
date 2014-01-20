@@ -1,11 +1,11 @@
-/* fswebcam - FireStorm.cx's webcam generator                */
-/*===========================================================*/
-/* Copyright (C)2005-2009 Philip Heron <phil@firestorm.cx>   */
-/*                                                           */
-/* This program is distributed under the terms of the GNU    */
-/* General Public License, version 2. You may use, modify,   */
-/* and redistribute it under the terms of this license. A    */
-/* copy should be included with this source.                 */
+/* fswebcam - FireStorm.cx's webcam generator                 */
+/*============================================================*/
+/* Copyright (C)2005-2010 Philip Heron <phil@sanslogic.co.uk> */
+/*                                                            */
+/* This program is distributed under the terms of the GNU     */
+/* General Public License, version 2. You may use, modify,    */
+/* and redistribute it under the terms of this license. A     */
+/* copy should be included with this source.                  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -62,6 +62,8 @@ v4l2_palette_t v4l2_palette[] = {
 	{ SRC_PAL_UYVY,    V4L2_PIX_FMT_UYVY   },
 	{ SRC_PAL_YUV420P, V4L2_PIX_FMT_YUV420 },
 	{ SRC_PAL_BAYER,   V4L2_PIX_FMT_SBGGR8 },
+	{ SRC_PAL_SGBRG8,  V4L2_PIX_FMT_SGBRG8 },
+	{ SRC_PAL_SGRBG8,  V4L2_PIX_FMT_SGRBG8 },
 	{ SRC_PAL_RGB565,  V4L2_PIX_FMT_RGB565 },
 	{ SRC_PAL_RGB555,  V4L2_PIX_FMT_RGB555 },
 	{ SRC_PAL_GREY,    V4L2_PIX_FMT_GREY   },
@@ -541,7 +543,8 @@ int src_v4l2_set_pix_format(src_t *src)
 	
 	while(ioctl(s->fd, VIDIOC_ENUM_FMT, &fmt) != -1)
 	{
-		DEBUG("%i: %c%c%c%c (%s)", v4l2_pal,
+		DEBUG("%i: [0x%08X] '%c%c%c%c' (%s)", v4l2_pal,
+		      fmt.pixelformat,
 		      fmt.pixelformat >> 0,  fmt.pixelformat >> 8,
 		      fmt.pixelformat >> 16, fmt.pixelformat >> 24,
 		      fmt.description);
@@ -627,6 +630,27 @@ int src_v4l2_set_pix_format(src_t *src)
 	ERROR("Unable to find a compatible palette format.");
 	
 	return(-1);
+}
+
+int src_v4l2_set_fps(src_t *src)
+{
+	src_v4l2_t *s = (src_v4l2_t *) src->state;
+	struct v4l2_streamparm setfps;
+	
+	memset(&setfps, 0, sizeof(setfps));
+	
+	setfps.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	setfps.parm.capture.timeperframe.numerator = 1;
+	setfps.parm.capture.timeperframe.denominator = src->fps;
+	if(ioctl(s->fd, VIDIOC_S_PARM, setfps) == -1)
+	{
+		/* Not fatal - just warn about it */
+		WARN("Error setting frame rate:");
+		WARN("VIDIOC_S_PARM: %s", strerror(errno));
+		return(-1);
+	}
+	
+	return(0);
 }
 
 int src_v4l2_free_mmap(src_t *src)
@@ -830,6 +854,9 @@ int src_v4l2_open(src_t *src)
 		src_close(src);
 		return(-1);
 	}
+	
+	/* Set the frame-rate if > 0 */
+	if(src->fps) src_v4l2_set_fps(src);
 	
 	/* Delay to let the image settle down. */
 	if(src->delay)

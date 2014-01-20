@@ -1,11 +1,11 @@
-/* fswebcam - Small and simple webcam for *nix               */
-/*===========================================================*/
-/* Copyright (C)2005-2009 Philip Heron <phil@firestorm.cx>   */
-/*                                                           */
-/* This program is distributed under the terms of the GNU    */
-/* General Public License, version 2. You may use, modify,   */
-/* and redistribute it under the terms of this license. A    */
-/* copy should be included with this source.                 */
+/* fswebcam - Small and simple webcam for *nix                */
+/*============================================================*/
+/* Copyright (C)2005-2019 Philip Heron <phil@sanslogic.co.uk> */
+/*                                                            */
+/* This program is distributed under the terms of the GNU     */
+/* General Public License, version 2. You may use, modify,    */
+/* and redistribute it under the terms of this license. A     */
+/* copy should be included with this source.                  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -90,6 +90,7 @@
 #define OPT_SAVE            (OPTBASE + 46)
 #define OPT_EXEC            (OPTBASE + 47)
 #define OPT_DUMPFRAME       (OPTBASE + 48)
+#define OPT_FPS             (OPTBASE + 49)
 
 typedef struct {
 	
@@ -138,6 +139,7 @@ typedef struct {
 	unsigned int width;
 	unsigned int height;
 	unsigned int frames;
+	unsigned int fps;
 	unsigned int skipframes;
 	int palette;
 	src_option_t **option;
@@ -597,7 +599,20 @@ int fswc_add_image_bayer(src_t *src, avgbmp_t *abitmap)
 	 * GRGRGRGRGR
 	 * BGBGBGBGBG
 	 * GRGRGRGRGR
+	 * 
+	 * SGBRG8 bayer pattern:
+	 * 
+	 * GBGBGBGBGB
+	 * RGRGRGRGRG
+	 * GBGBGBGBGB
+	 * RGRGRGRGRG
 	 *
+	 * SGRBG8 bayer pattern:
+	 *
+	 * GRGRGRGRGR
+	 * BGBGBGBGBG
+	 * GRGRGRGRGR
+	 * BGBGBGBGBG
 	*/
 	
 	while(i-- > 0)
@@ -605,6 +620,7 @@ int fswc_add_image_bayer(src_t *src, avgbmp_t *abitmap)
 		uint8_t *p[8];
 		uint8_t hn, vn, di;
 		uint8_t r, g, b;
+		int mode;
 		
 		/* Setup pointers to this pixel's neighbours. */
 		p[0] = img - w - 1;
@@ -628,7 +644,10 @@ int fswc_add_image_bayer(src_t *src, avgbmp_t *abitmap)
 		di = (*p[0] + *p[2] + *p[5] + *p[7]) / 4;
 		
 		/* Calculate RGB */
-		if((x + y) & 0x01)
+		if(src->palette == SRC_PAL_BAYER) mode = (x + y) & 0x01;
+		else mode = ~(x + y) & 0x01;
+		
+		if(mode)
 		{
 			g = *img;
 			if(y & 0x01) { r = hn; b = vn; }
@@ -636,6 +655,13 @@ int fswc_add_image_bayer(src_t *src, avgbmp_t *abitmap)
 		}
 		else if(y & 0x01) { r = *img; g = (vn + hn) / 2; b = di; }
 		else              { b = *img; g = (vn + hn) / 2; r = di; }
+		
+		if(src->palette == SRC_PAL_SGRBG8)
+		{
+			uint8_t t = r;
+			r = b;
+			b = t;
+		}
 		
 		*(abitmap++) += r;
 		*(abitmap++) += g;
@@ -944,7 +970,7 @@ int fswc_output(fswebcam_config_t *config, char *name, gdImage *image)
 	if(!name) return(-1);
 	if(!strncmp(name, "-", 2) && config->background)
 	{
-		ERROR("stdout is unavalaible in background mode.");
+		ERROR("stdout is unavailable in background mode.");
 		return(-1);
 	}
 	
@@ -963,7 +989,21 @@ int fswc_output(fswebcam_config_t *config, char *name, gdImage *image)
 	fswc_draw_overlay(config, config->underlay, im);
 	
 	/* Draw the banner. */
-	if(config->banner != NO_BANNER) fswc_draw_banner(config, im);
+	if(config->banner != NO_BANNER)
+	{
+		char *err;
+		
+		/* Check if drawing text works */
+		err = gdImageStringFT(NULL, NULL, 0, config->font, config->fontsize, 0.0, 0, 0, "");
+		
+		if(!err) fswc_draw_banner(config, im);
+		else
+		{
+			/* Can't load the font - display a warning */
+			WARN("Unable to load font '%s': %s", config->font, err);
+			WARN("Disabling the the banner.");
+		}
+	}
 	
 	/* Draw the overlay. */
 	fswc_draw_overlay(config, config->overlay, im);
@@ -1061,6 +1101,7 @@ int fswc_grab(fswebcam_config_t *config)
 	src.palette    = config->palette;
 	src.width      = config->width;
 	src.height     = config->height;
+	src.fps        = config->fps;
 	src.option     = config->option;
 	
 	HEAD("--- Opening %s...", config->device);
@@ -1138,6 +1179,8 @@ int fswc_grab(fswebcam_config_t *config)
 			fswc_add_image_bgr24(&src, abitmap);
 			break;
 		case SRC_PAL_BAYER:
+		case SRC_PAL_SGBRG8:
+		case SRC_PAL_SGRBG8:
 			fswc_add_image_bayer(&src, abitmap);
 			break;
 		case SRC_PAL_YUYV:
@@ -1566,6 +1609,7 @@ int fswc_usage()
 	       " -p, --palette <name>         Selects the palette format to use.\n"
 	       " -D, --delay <number>         Sets the pre-capture delay time. (seconds)\n"
 	       " -r, --resolution <size>      Sets the capture resolution.\n"
+	       "     --fps <framerate>        Sets the capture frame rate.\n"
 	       " -F, --frames <number>        Sets the number of frames to capture.\n"
 	       " -S, --skip <number>          Sets the number of frames to skip.\n"
 	       "     --dumpframe <filename>   Dump a raw frame frame to file.\n"
@@ -1873,6 +1917,7 @@ int fswc_getopts(fswebcam_config_t *config, int argc, char *argv[])
 	config->list = 0;
 	config->width = 384;
 	config->height = 288;
+	config->fps = 0;
 	config->frames = 1;
 	config->skipframes = 0;
 	config->palette = SRC_PAL_ANY;
@@ -1880,22 +1925,6 @@ int fswc_getopts(fswebcam_config_t *config, int argc, char *argv[])
 	config->dumpframe = NULL;
 	config->jobs = 0;
 	config->job = NULL;
-	//config->banner = BOTTOM_BANNER;
-	//config->bg_colour = 0;
-	//config->bl_colour = 0;
-	//config->fg_colour = 0;
-	//config->title = NULL;
-	//config->subtitle = NULL;
-	//config->timestamp = NULL;
-	//config->info = NULL;
-	//config->font = NULL;
-	//config->fontsize = 0;
-	//config->shadow = 0;
-	//config->underlay = NULL;
-	//config->overlay = NULL;
-	//config->filename = NULL;
-	//config->format = FORMAT_JPEG;
-	//config->compression = -1;
 	
 	/* Don't report errors. */
 	opterr = 0;
@@ -1976,6 +2005,9 @@ int fswc_getopts(fswebcam_config_t *config, int argc, char *argv[])
 		case 'r':
 	 		config->width  = argtol(optarg, "x ", 0, 0, 10);
 			config->height = argtol(optarg, "x ", 1, 0, 10);
+			break;
+		case OPT_FPS:
+			config->fps = atoi(optarg);
 			break;
 		case 'F':
 			config->frames = atoi(optarg);

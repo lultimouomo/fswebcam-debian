@@ -1,4 +1,4 @@
-.TH FSWEBCAM "1" "24 December 2009" "fswebcam 20091224" "User Commands"
+.TH FSWEBCAM "1" "01 April 2010" "fswebcam 20100401" "User Commands"
 .SH NAME
 fswebcam \- Small and simple webcam for *nix.
 .SH SYNOPSIS
@@ -148,6 +148,10 @@ YUV420P
 .br
 BAYER
 .br
+SGBRG8
+.br
+SGRBG8
+.br
 RGB565
 .br
 RGB555
@@ -161,12 +165,10 @@ Set the image resolution of the source or device. The actual resolution used may
 Default is "384x288".
 
 .TP
-\fB\-\-list\-framesizes\fR
-Lists the supported resolutions for the selected source.
-
-.TP
-\fB\-\-list\-framerates\fR
-Lists the supported frame rates for the selected source and resolution.
+\fB\-\-fps\fR \fI<frames per second>\fR
+Sets the frame rate of the capture device. This currently only works with certain V4L2 devices.
+.IP
+Default is "0", let the device decide.
 
 .TP
 \fB\-F\fR, \fB\-\-frames\fR \fI<number>\fR
@@ -413,7 +415,7 @@ Causes fswebcam to capture an image immediately without waiting on the timer in 
 The spacing between letters may be incorrect. This is an issue with the GD library.
 
 .SH REPORTING BUGS
-Please report bugs to <phil@firestorm.cx>.
+Please report bugs to <phil@sanslogic.co.uk>.
 
 .SH SEE ALSO
 \fB
@@ -421,5 +423,5 @@ ncftpput(1), strftime(3)
 \fP
 
 .SH AUTHOR
-Written by Philip Heron <phil@firestorm.cx>.
+Written by Philip Heron <phil@sanslogic.co.uk>.
 

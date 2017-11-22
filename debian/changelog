@@ -1,3 +1,11 @@
+fswebcam (20140113-2) unstable; urgency=medium
+
+  * Build-Depend on libgd-dev instead of libgd2-*-dev (Closes: #881745)
+  * Use DEP5 format for debian/copyright
+  * Bump Standards-Version (no changes needed)
+
+ -- Luca Niccoli <lultimouomo@gmail.com>  Wed, 22 Nov 2017 10:56:11 +0100
+
 fswebcam (20140113-1) unstable; urgency=low
 
   * Update debian/watch

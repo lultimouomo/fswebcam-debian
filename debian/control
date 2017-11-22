@@ -3,7 +3,7 @@ Section: graphics
 Priority: optional
 Maintainer: Luca Niccoli <lultimouomo@gmail.com>
 Build-Depends: debhelper (>= 9.20120417), libgd-dev, libv4l-dev
-Standards-Version: 3.9.5
+Standards-Version: 4.1.1
 Homepage: http://www.firestorm.cx/fswebcam/
 Vcs-Git: git://anonscm.debian.org/collab-maint/fswebcam.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/fswebcam.git;a=summary
